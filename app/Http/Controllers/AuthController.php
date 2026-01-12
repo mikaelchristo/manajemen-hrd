@@ -43,29 +43,39 @@ class AuthController extends Controller
         if (!$user) {
             return back()->withErrors([
                 'email' => 'Email tidak terdaftar',
-            ])->withInput();
+            ])->withInput($request->only('email'));
         }
 
         // Check if user is active
         if (!$user->is_active) {
             return back()->withErrors([
                 'email' => 'Akun Anda tidak aktif. Hubungi administrator.',
-            ])->withInput();
+            ])->withInput($request->only('email'));
         }
 
-        // Attempt to login
-        if (Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password
-        ], $request->filled('remember'))) {
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard'))->with('success', 'Login berhasil! Selamat datang ' . Auth::user()->name);
+        // Verify password
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'password' => 'Password salah',
+            ])->withInput($request->only('email'));
         }
 
-        return back()->withErrors([
-            'password' => 'Password salah',
-        ])->withInput();
+        // Login manually
+        Auth::login($user, $request->filled('remember'));
+
+        // Regenerate session
+        $request->session()->regenerate();
+
+        // Store additional session data
+        session([
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'user_role' => $user->role,
+            'login_time' => now()->toDateTimeString(),
+        ]);
+
+        return redirect()->intended(route('dashboard'))->with('success', 'Login berhasil! Selamat datang ' . $user->name);
     }
 
     /**
@@ -73,11 +83,21 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        // Get user name before logout
+        $userName = Auth::user()->name ?? 'User';
+
+        // Logout user
         Auth::logout();
 
+        // Clear all session data
         $request->session()->invalidate();
+
+        // Regenerate CSRF token
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Logout berhasil');
+        // Forget specific session keys
+        $request->session()->forget(['user_id', 'user_name', 'user_email', 'user_role', 'login_time']);
+
+        return redirect()->route('login')->with('success', 'Anda telah berhasil logout');
     }
 }

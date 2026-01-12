@@ -143,11 +143,11 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithC
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                
+
                 // Get highest row and column
                 $highestRow = $sheet->getHighestRow();
                 $highestColumn = $sheet->getHighestColumn();
-                
+
                 // Format all cells as text to prevent scientific notation
                 $sheet->getStyle('A2:' . $highestColumn . $highestRow)
                     ->getNumberFormat()
