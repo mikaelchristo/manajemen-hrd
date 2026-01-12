@@ -32,13 +32,20 @@ Route::middleware(['auth'])->group(function () {
         $pegawaiPKWT = Karyawan::where('statusPegawai', 'PKWT')->count();
         $pegawaiKontrak = Karyawan::where('statusPegawai', 'Kontrak')->count();
 
+        $pageTitle = 'Dashboard';
+        $breadcrumbs = [
+            ['title' => 'Dashboard']
+        ];
+
         return view('dashboard', compact(
             'totalKaryawan',
             'totalLakiLaki',
             'totalPerempuan',
             'pegawaiTetap',
             'pegawaiPKWT',
-            'pegawaiKontrak'
+            'pegawaiKontrak',
+            'pageTitle',
+            'breadcrumbs'
         ));
     })->name('dashboard');
 

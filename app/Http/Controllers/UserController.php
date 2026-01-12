@@ -15,7 +15,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('users.index');
+        $pageTitle = 'Manajemen User';
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Manajemen User']
+        ];
+
+        return view('users.index', compact('pageTitle', 'breadcrumbs'));
     }
 
     /**

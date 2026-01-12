@@ -15,7 +15,14 @@ class DataAppController extends Controller
     public function index()
     {
         $dataApp = DataApp::getInstance();
-        return view('settings.data-app', compact('dataApp'));
+        $pageTitle = 'Pengaturan Aplikasi';
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Pengaturan', 'url' => '#'],
+            ['title' => 'Pengaturan Aplikasi']
+        ];
+
+        return view('settings.data-app', compact('dataApp', 'pageTitle', 'breadcrumbs'));
     }
 
     /**

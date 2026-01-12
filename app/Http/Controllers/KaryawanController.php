@@ -20,7 +20,13 @@ class KaryawanController extends Controller
         $units = Karyawan::select('unit')->distinct()->orderBy('unit')->pluck('unit');
         $statuses = ['Tetap', 'PKWT', 'Kontrak'];
 
-        return view('karyawan.index', compact('units', 'statuses'));
+        $pageTitle = 'Data Karyawan';
+        $breadcrumbs = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Data Karyawan']
+        ];
+
+        return view('karyawan.index', compact('units', 'statuses', 'pageTitle', 'breadcrumbs'));
     }
 
     /**
