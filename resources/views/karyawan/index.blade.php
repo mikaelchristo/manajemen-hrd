@@ -117,8 +117,15 @@
                         <th class="min-w-125px">Status</th>
                         <th class="min-w-150px">Tempat Lahir</th>
                         <th class="min-w-125px">Tanggal Lahir</th>
-                        <th class="min-w-100px">Umur</th>
+                        <th class="min-w-100px">Umur Tahun</th>
+                        <th class="min-w-100px">Umur Bulan</th>
                         <th class="min-w-100px">Jenis Kelamin</th>
+                        <th class="min-w-125px">Tgl Masuk Kerja</th>
+                        <th class="min-w-125px">SK Tetap</th>
+                        <th class="min-w-100px">Pendidikan</th>
+                        <th class="min-w-200px">Tamatan</th>
+                        <th class="min-w-125px">No HP</th>
+                        <th class="min-w-150px">Email</th>
                         <th class="text-end min-w-125px">Aksi</th>
                     </tr>
                 </thead>
@@ -224,6 +231,53 @@
                         </div>
                     </div>
 
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Masuk Kerja</label>
+                            <input type="date" class="form-control" name="tglMulaiKerja" id="tglMulaiKerja">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">SK Tetap (No. SK)</label>
+                            <input type="text" class="form-control" name="skTetap" id="skTetap" placeholder="Contoh: 82/SK/DE/YARSI/VI-2015">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Pendidikan</label>
+                            <input type="text" class="form-control" name="pendidikan" id="pendidikan" placeholder="Contoh: S1">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tamatan</label>
+                            <input type="text" class="form-control" name="tamatan" id="tamatan" placeholder="Universitas - Jurusan">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">No HP</label>
+                            <input type="text" class="form-control" name="noHp" id="noHp" placeholder="08xxxxxxxxxx">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <label class="form-label">Alamat</label>
+                            <textarea class="form-control" name="alamat" id="alamat" rows="3" placeholder="Masukkan Alamat Lengkap"></textarea>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
                     <div class="text-center pt-15">
                         <button type="reset" class="btn btn-light me-3" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary" id="btn-submit">
@@ -300,6 +354,24 @@
                                 <span class="fw-bold fs-6 text-gray-800" id="detail-jenisKelamin"></span>
                             </div>
                         </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">No HP</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-noHp"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Email</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-email"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Alamat</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-alamat"></span>
+                            </div>
+                        </div>
                     </div>
                     <!--end::Card body-->
                 </div>
@@ -338,6 +410,30 @@
                             <label class="col-lg-4 fw-semibold text-muted">Status Pegawai</label>
                             <div class="col-lg-8">
                                 <span class="fw-bold fs-6 text-gray-800" id="detail-statusPegawai"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Tanggal Masuk Kerja</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-tglMulaiKerja"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">SK Tetap</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-skTetap"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Pendidikan</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-pendidikan"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Tamatan</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-tamatan"></span>
                             </div>
                         </div>
                     </div>
@@ -445,7 +541,14 @@ var KTKaryawanList = function() {
                 {data: 'tempatLahir', name: 'tempatLahir'},
                 {data: 'tglLahir', name: 'tglLahir'},
                 {data: 'umur', name: 'umur', orderable: false, searchable: false},
+                {data: 'umur_bulan', name: 'umur_bulan', orderable: false, searchable: false},
                 {data: 'jenisKelamin', name: 'jenisKelamin'},
+                {data: 'tglMulaiKerja', name: 'tglMulaiKerja', render: function(data) { return data ? data : '-'; }},
+                {data: 'skTetap', name: 'skTetap', render: function(data) { return data ? data : '-'; }},
+                {data: 'pendidikan', name: 'pendidikan', render: function(data) { return data ? data : '-'; }},
+                {data: 'tamatan', name: 'tamatan', render: function(data) { return data ? data : '-'; }},
+                {data: 'noHp', name: 'noHp', render: function(data) { return data ? data : '-'; }},
+                {data: 'email', name: 'email', render: function(data) { return data ? data : '-'; }},
                 {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-end'}
             ],
             order: [[1, 'asc']],
@@ -540,7 +643,14 @@ var KTKaryawanList = function() {
                         $('#statusPegawai').val(data.statusPegawai);
                         $('#tempatLahir').val(data.tempatLahir);
                         $('#tglLahir').val(data.tglLahir);
+                        $('#tglMulaiKerja').val(data.tglMulaiKerja);
                         $('#jenisKelamin').val(data.jenisKelamin);
+                        $('#skTetap').val(data.skTetap);
+                        $('#pendidikan').val(data.pendidikan);
+                        $('#tamatan').val(data.tamatan);
+                        $('#noHp').val(data.noHp);
+                        $('#email').val(data.email);
+                        $('#alamat').val(data.alamat);
 
                         // Clear validation errors
                         $('.form-control, .form-select').removeClass('is-invalid');
@@ -575,20 +685,29 @@ var KTKaryawanList = function() {
                 success: function(response) {
                     if (response.success) {
                         const data = response.data.karyawan;
-                        const umur = response.data.umur || '-';
+                        const umurTahun = response.data.umur_tahun || 0;
+                        const umurBulan = response.data.umur_bulan || 0;
                         const tglLahirFormatted = response.data.tgl_lahir_formatted || '-';
+                        const tglMulaiKerjaFormatted = response.data.tgl_masuk_kerja_formatted || '-';
 
                         // Fill detail modal
                         $('#detail-nikKry').text(data.nikKry || '-');
                         $('#detail-namaKaryawan').text(data.namaKaryawan || '-');
                         $('#detail-nikKtp').text(data.nikKtp || '-');
                         $('#detail-tempatTglLahir').text((data.tempatLahir || '-') + ', ' + tglLahirFormatted);
-                        $('#detail-umur').text(umur);
+                        $('#detail-umur').text(umurTahun + ' tahun (' + umurBulan + ' bulan)');
                         $('#detail-jenisKelamin').text(data.jenisKelamin || '-');
+                        $('#detail-noHp').text(data.noHp || '-');
+                        $('#detail-email').text(data.email || '-');
+                        $('#detail-alamat').text(data.alamat || '-');
                         $('#detail-unit').text(data.unit || '-');
                         $('#detail-gol').text(data.gol || '-');
                         $('#detail-profesi').text(data.profesi || '-');
                         $('#detail-statusPegawai').text(data.statusPegawai || '-');
+                        $('#detail-tglMulaiKerja').text(tglMulaiKerjaFormatted);
+                        $('#detail-skTetap').text(data.skTetap || '-');
+                        $('#detail-pendidikan').text(data.pendidikan || '-');
+                        $('#detail-tamatan').text(data.tamatan || '-');
 
                         $('#modal-detail').modal('show');
                     }
@@ -704,7 +823,14 @@ var KTKaryawanList = function() {
                 statusPegawai: $('#statusPegawai').val(),
                 tempatLahir: $('#tempatLahir').val(),
                 tglLahir: $('#tglLahir').val(),
-                jenisKelamin: $('#jenisKelamin').val()
+                tglMulaiKerja: $('#tglMulaiKerja').val(),
+                jenisKelamin: $('#jenisKelamin').val(),
+                skTetap: $('#skTetap').val(),
+                pendidikan: $('#pendidikan').val(),
+                tamatan: $('#tamatan').val(),
+                noHp: $('#noHp').val(),
+                email: $('#email').val(),
+                alamat: $('#alamat').val()
             };
 
             if (method === 'PUT') {

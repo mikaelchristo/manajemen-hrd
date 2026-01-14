@@ -53,7 +53,15 @@ class KaryawanController extends Controller
                     if ($row->tglLahir) {
                         $birthDate = \Carbon\Carbon::parse($row->tglLahir);
                         $umur = (int) $birthDate->diffInYears(now());
-                        return $umur . ' tahun';
+                        return $umur;
+                    }
+                    return '-';
+                })
+                ->addColumn('umur_bulan', function($row){
+                    if ($row->tglLahir) {
+                        $birthDate = \Carbon\Carbon::parse($row->tglLahir);
+                        $umurBulan = (int) $birthDate->diffInMonths(now());
+                        return $umurBulan;
                     }
                     return '-';
                 })
@@ -70,7 +78,13 @@ class KaryawanController extends Controller
                     return $btn;
                 })
                 ->editColumn('tglLahir', function($row){
-                    return $row->tglLahir ? $row->tglLahir->format('d-m-Y') : '';
+                    return $row->tglLahir ? $row->tglLahir->format('d-m-Y') : '-';
+                })
+                ->editColumn('tglMulaiKerja', function($row){
+                    return $row->tglMulaiKerja ? $row->tglMulaiKerja->format('d-m-Y') : '-';
+                })
+                ->editColumn('skTetap', function($row){
+                    return $row->skTetap ? $row->skTetap : '-';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -101,13 +115,19 @@ class KaryawanController extends Controller
             'namaKaryawan' => 'required|string|max:255',
             'nikKtp' => 'required|string|max:16',
             'unit' => 'required|string|max:100',
-            'gol' => 'required|string|max:50',
+            'gol' => 'nullable|string|max:50',
             'profesi' => 'required|string|max:100',
             'statusPegawai' => 'required|string|max:50',
             'tempatLahir' => 'required|string|max:100',
             'tglLahir' => 'required|date',
-            'tglMulaiKerja' => 'required|date',
+            'tglMulaiKerja' => 'nullable|date',
             'jenisKelamin' => 'required|in:Laki-laki,Perempuan',
+            'skTetap' => 'nullable|string|max:100',
+            'pendidikan' => 'nullable|string|max:50',
+            'tamatan' => 'nullable|string|max:255',
+            'noHp' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'alamat' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -150,18 +170,22 @@ class KaryawanController extends Controller
         }
 
         // Calculate umur
-        $umur = null;
+        $umurTahun = null;
+        $umurBulan = null;
         if ($karyawan->tglLahir) {
             $birthDate = \Carbon\Carbon::parse($karyawan->tglLahir);
-            $umur = (int) $birthDate->diffInYears(now()) . ' tahun';
+            $umurTahun = (int) $birthDate->diffInYears(now());
+            $umurBulan = (int) $birthDate->diffInMonths(now());
         }
 
         return response()->json([
             'success' => true,
             'data' => [
                 'karyawan' => $karyawan,
-                'umur' => $umur,
-                'tgl_lahir_formatted' => $karyawan->tglLahir ? $karyawan->tglLahir->format('d-m-Y') : null
+                'umur_tahun' => $umurTahun,
+                'umur_bulan' => $umurBulan,
+                'tgl_lahir_formatted' => $karyawan->tglLahir ? $karyawan->tglLahir->format('d-m-Y') : null,
+                'tgl_masuk_kerja_formatted' => $karyawan->tglMulaiKerja ? $karyawan->tglMulaiKerja->format('d-m-Y') : null,
             ]
         ]);
     }
@@ -185,13 +209,19 @@ class KaryawanController extends Controller
             'namaKaryawan' => 'required|string|max:255',
             'nikKtp' => 'required|string|max:16',
             'unit' => 'required|string|max:100',
-            'gol' => 'required|string|max:50',
+            'gol' => 'nullable|string|max:50',
             'profesi' => 'required|string|max:100',
             'statusPegawai' => 'required|string|max:50',
             'tempatLahir' => 'required|string|max:100',
             'tglLahir' => 'required|date',
-            'tglMulaiKerja' => 'required|date',
+            'tglMulaiKerja' => 'nullable|date',
             'jenisKelamin' => 'required|in:Laki-laki,Perempuan',
+            'skTetap' => 'nullable|string|max:100',
+            'pendidikan' => 'nullable|string|max:50',
+            'tamatan' => 'nullable|string|max:255',
+            'noHp' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'alamat' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -368,17 +398,23 @@ class KaryawanController extends Controller
     public function downloadTemplate()
     {
         $headers = [
-            'NIK Karyawan',
-            'Nama Karyawan',
+            'NIK KRY',
+            'NAMA KARYAWAN',
             'NIK KTP',
-            'Unit',
-            'Golongan',
-            'Profesi',
-            'Status Pegawai',
-            'Tempat Lahir',
-            'Tanggal Lahir',
-            'Umur',
-            'Jenis Kelamin'
+            'UNIT',
+            'GOL',
+            'PROFESI',
+            'STATUS PEGAWAI',
+            'TEMPAT LAHIR',
+            'TGL_LAHIR',
+            'JENIS KELAMIN',
+            'TGL MASUK KERJA',
+            'SK TETAP',
+            'PENDIDIKAN',
+            'TAMATAN',
+            'No HP',
+            'EMAIL',
+            'ALAMAT'
         ];
 
         $filename = 'template_karyawan.csv';
@@ -391,31 +427,23 @@ class KaryawanController extends Controller
 
         // Add sample data
         fputcsv($handle, [
-            'K001',
-            'John Doe',
-            '1234567890123456',
-            'IT Department',
-            'III/A',
-            'Software Developer',
-            'Tetap',
-            'Jakarta',
+            '2258/IS/72015',
+            'SUCI RAHMADANI, A.Md',
+            '1375034603920002',
+            'AKUNTANSI',
+            'IIA',
+            'PENATA AKUNTANSI',
+            'TETAP',
+            'BUKITTINGGI',
             '01 Januari 1990',
-            '35',
-            'Laki-laki'
-        ]);
-
-        fputcsv($handle, [
-            'K002',
-            'Jane Smith',
-            '1234567890123457',
-            'Human Resources',
-            'III/B',
-            'HR Manager',
-            'Tetap',
-            'Bandung',
-            '15 Mei 1988',
-            '37',
-            'Perempuan'
+            'Perempuan',
+            '01 Januari 2015',
+            '82/SK/DE/YARSI/VI-2015',
+            'D3 AKUNTANSI',
+            'AKTAN BOEKITTINGGI',
+            '082388328768',
+            'sucirahmadani1344@gmail.com',
+            'Jl. Sudirman No. 123'
         ]);
 
         rewind($handle);

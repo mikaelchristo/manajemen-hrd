@@ -36,23 +36,46 @@ class KaryawanImport implements
     public function model(array $row)
     {
         try {
-            // Get values directly from row
-            $nikKaryawan = $row['nik_karyawan'] ?? null;
+            // Log raw row data for debugging
+            Log::info('Processing row', ['row_keys' => array_keys($row), 'row_data' => $row]);
+
+            // Get values directly from row - sesuai dengan header Excel:
+            // NIK KRY | NAMA KARYAWAN | NIK KTP | UNIT | GOL | PROFESI | STATUS PEGAWAI | 
+            // TEMPAT LAHIR | TGL_LAHIR | JENIS KELAMIN | TGL MASUK KERJA | SK TETAP | 
+            // PENDIDIKAN | TAMATAN | No HP | EMAIL | ALAMAT
+            
+            $nikKaryawan = $row['nik_kry'] ?? null;
             $namaKaryawan = $row['nama_karyawan'] ?? null;
             $nikKtp = $row['nik_ktp'] ?? null;
             $unit = $row['unit'] ?? null;
-            $golongan = $row['golongan'] ?? null;
+            $golongan = $row['gol'] ?? null;
             $profesi = $row['profesi'] ?? null;
             $statusPegawai = $row['status_pegawai'] ?? null;
             $tempatLahir = $row['tempat_lahir'] ?? null;
-            $tanggalLahir = $row['tanggal_lahir'] ?? null;
+            $tanggalLahir = $row['tgl_lahir'] ?? null;
             $jenisKelamin = $row['jenis_kelamin'] ?? null;
+            $tanggalMasukKerja = $row['tgl_masuk_kerja'] ?? null;
+            $skTetap = $row['sk_tetap'] ?? null; // Ini adalah nomor SK, bukan tanggal
+            $pendidikan = $row['pendidikan'] ?? null;
+            $tamatan = $row['tamatan'] ?? null;
+            $noHp = $row['no_hp'] ?? null;
+            $email = $row['email'] ?? null;
+            $alamat = $row['alamat'] ?? null;
 
             // Skip if critical fields are empty
-            if (empty($nikKaryawan) || empty($namaKaryawan) || empty($nikKtp)) {
-                Log::warning('Skipping row: Missing critical fields', ['row' => $row]);
+            if (empty(trim($nikKaryawan ?? '')) || empty(trim($namaKaryawan ?? '')) || empty(trim($nikKtp ?? ''))) {
+                Log::warning('Skipping row: Missing critical fields', [
+                    'nikKaryawan' => $nikKaryawan,
+                    'namaKaryawan' => $namaKaryawan,
+                    'nikKtp' => $nikKtp
+                ]);
                 return null;
             }
+
+            // Trim values
+            $nikKaryawan = trim($nikKaryawan);
+            $namaKaryawan = trim($namaKaryawan);
+            $nikKtp = trim($nikKtp);
 
             // Cek apakah NIK sudah ada
             if (Karyawan::where('nikKry', $nikKaryawan)->exists()) {
@@ -68,6 +91,12 @@ class KaryawanImport implements
                 return null;
             }
 
+            // Transform tanggal masuk kerja (buat nullable jika kosong)
+            $tglMulaiKerja = !empty($tanggalMasukKerja) ? $this->transformDate($tanggalMasukKerja) : null;
+            
+            // SK Tetap adalah nomor SK (string), bukan tanggal - jadi langsung simpan sebagai string
+            $noSkTetap = !empty($skTetap) ? trim($skTetap) : null;
+
             // Set default values
             $unit = !empty($unit) ? trim($unit) : 'N/A';
             $profesi = !empty($profesi) ? trim($profesi) : 'N/A';
@@ -75,18 +104,29 @@ class KaryawanImport implements
             $tempatLahir = !empty($tempatLahir) ? trim($tempatLahir) : 'N/A';
             $jenisKelamin = !empty($jenisKelamin) ? trim($jenisKelamin) : 'Laki-laki';
 
-            return new Karyawan([
-                'nikKry' => trim($nikKaryawan),
-                'namaKaryawan' => trim($namaKaryawan),
-                'nikKtp' => trim($nikKtp),
+            $karyawanData = [
+                'nikKry' => $nikKaryawan,
+                'namaKaryawan' => $namaKaryawan,
+                'nikKtp' => $nikKtp,
                 'unit' => $unit,
                 'gol' => !empty($golongan) ? trim($golongan) : null,
                 'profesi' => $profesi,
                 'statusPegawai' => $statusPegawai,
                 'tempatLahir' => $tempatLahir,
                 'tglLahir' => $tglLahir,
+                'tglMulaiKerja' => $tglMulaiKerja,
                 'jenisKelamin' => $jenisKelamin,
-            ]);
+                'skTetap' => $noSkTetap,
+                'pendidikan' => !empty($pendidikan) ? trim($pendidikan) : null,
+                'tamatan' => !empty($tamatan) ? trim($tamatan) : null,
+                'noHp' => !empty($noHp) ? trim($noHp) : null,
+                'email' => !empty($email) ? trim($email) : null,
+                'alamat' => !empty($alamat) ? trim($alamat) : null,
+            ];
+
+            Log::info('Creating karyawan', ['data' => $karyawanData]);
+
+            return new Karyawan($karyawanData);
         } catch (\Exception $e) {
             Log::error('Error processing row: ' . $e->getMessage(), ['row' => $row]);
             return null;

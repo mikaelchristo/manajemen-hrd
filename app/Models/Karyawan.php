@@ -21,10 +21,41 @@ class Karyawan extends Model
         'statusPegawai',
         'tempatLahir',
         'tglLahir',
+        'tglMulaiKerja',
         'jenisKelamin',
+        'skTetap',
+        'pendidikan',
+        'tamatan',
+        'noHp',
+        'email',
+        'alamat',
     ];
 
     protected $casts = [
         'tglLahir' => 'date',
+        'tglMulaiKerja' => 'date',
+        // skTetap adalah nomor SK (string), bukan tanggal
     ];
+
+    /**
+     * Get umur dalam tahun
+     */
+    public function getUmurTahunAttribute()
+    {
+        if ($this->tglLahir) {
+            return (int) \Carbon\Carbon::parse($this->tglLahir)->diffInYears(now());
+        }
+        return null;
+    }
+
+    /**
+     * Get umur dalam bulan
+     */
+    public function getUmurBulanAttribute()
+    {
+        if ($this->tglLahir) {
+            return (int) \Carbon\Carbon::parse($this->tglLahir)->diffInMonths(now());
+        }
+        return null;
+    }
 }

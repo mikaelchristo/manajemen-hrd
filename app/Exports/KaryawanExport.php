@@ -30,23 +30,25 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithC
     {
         return [
             'No',
-            'NIK Karyawan',
-            'Nama Karyawan',
+            'NIK KRY',
+            'NAMA KARYAWAN',
             'NIK KTP',
-            'Unit',
-            'Golongan',
-            'Profesi',
-            'Status Pegawai',
-            'Tempat Lahir',
-            'Tanggal Lahir',
-            'Umur',
-            'Jenis Kelamin',
-            'Status',
-            'Alamat',
-            'No Telepon',
-            'Email',
-            'Pendidikan',
-            'Jurusan',
+            'UNIT',
+            'GOL',
+            'PROFESI',
+            'STATUS PEGAWAI',
+            'TEMPAT LAHIR',
+            'TGL_LAHIR',
+            'JENIS KELAMIN',
+            'TGL MASUK KERJA',
+            'SK TETAP',
+            'PENDIDIKAN',
+            'TAMATAN',
+            'No HP',
+            'EMAIL',
+            'ALAMAT',
+            'UMUR TAHUN',
+            'UMUR BULAN',
         ];
     }
 
@@ -58,12 +60,20 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithC
         static $no = 0;
         $no++;
 
-        // Hitung umur (dalam tahun saja, tanpa desimal)
-        $umur = '';
+        // Hitung umur dalam tahun
+        $umurTahun = '';
         if ($karyawan->tglLahir) {
             $birthDate = \Carbon\Carbon::parse($karyawan->tglLahir);
-            $umurValue = (int) $birthDate->diffInYears(now());
-            $umur = "\t" . $umurValue; // Prefix dengan \t agar dianggap text
+            $umurTahunValue = (int) $birthDate->diffInYears(now());
+            $umurTahun = "\t" . $umurTahunValue;
+        }
+
+        // Hitung umur dalam bulan
+        $umurBulan = '';
+        if ($karyawan->tglLahir) {
+            $birthDate = \Carbon\Carbon::parse($karyawan->tglLahir);
+            $umurBulanValue = (int) $birthDate->diffInMonths(now());
+            $umurBulan = "\t" . $umurBulanValue;
         }
 
         return [
@@ -77,14 +87,16 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithC
             $karyawan->statusPegawai,
             $karyawan->tempatLahir,
             $karyawan->tglLahir ? $karyawan->tglLahir->format('d-m-Y') : '',
-            $umur,
             $karyawan->jenisKelamin,
-            $karyawan->status,
-            $karyawan->alamat,
-            "\t" . $karyawan->noTelp,
-            $karyawan->email,
+            $karyawan->tglMulaiKerja ? $karyawan->tglMulaiKerja->format('d-m-Y') : '',
+            $karyawan->skTetap ? $karyawan->skTetap : '',
             $karyawan->pendidikan,
-            $karyawan->jurusan,
+            $karyawan->tamatan,
+            "\t" . $karyawan->noHp,
+            $karyawan->email,
+            $karyawan->alamat,
+            $umurTahun,
+            $umurBulan,
         ];
     }
 
@@ -104,14 +116,16 @@ class KaryawanExport implements FromCollection, WithHeadings, WithMapping, WithC
             'H' => 20,
             'I' => 20,
             'J' => 18,
-            'K' => 12,
-            'L' => 15,
-            'M' => 15,
-            'N' => 40,
-            'O' => 18,
-            'P' => 30,
-            'Q' => 20,
-            'R' => 25,
+            'K' => 15,
+            'L' => 18,
+            'M' => 18,
+            'N' => 15,
+            'O' => 35,
+            'P' => 18,
+            'Q' => 30,
+            'R' => 40,
+            'S' => 12,
+            'T' => 12,
         ];
     }
 
