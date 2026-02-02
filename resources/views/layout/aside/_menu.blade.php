@@ -44,6 +44,62 @@
         </div>
         <!--end::Menu Item-->
 
+        <!--begin::Menu Section Absensi-->
+        <div class="menu-item">
+            <div class="menu-content pt-8 pb-2">
+                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Monitoring Absensi</span>
+            </div>
+        </div>
+        <!--end::Menu Section-->
+
+        <!--begin::Menu Item Absensi Harian-->
+        <div class="menu-item">
+            <a class="menu-link {{ Request::is('absensi') ? 'active' : '' }}" href="{{ route('absensi.index') }}">
+                <span class="menu-icon">
+                    <i class="ki-duotone ki-calendar-tick fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span>
+                        <span class="path5"></span>
+                        <span class="path6"></span>
+                    </i>
+                </span>
+                <span class="menu-title">Absensi Harian</span>
+            </a>
+        </div>
+        <!--end::Menu Item-->
+
+        <!--begin::Menu Item Lembur-->
+        <div class="menu-item">
+            <a class="menu-link {{ Request::is('absensi/lembur*') ? 'active' : '' }}" href="{{ route('absensi.lembur') }}">
+                <span class="menu-icon">
+                    <i class="ki-duotone ki-time fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </span>
+                <span class="menu-title">Data Lembur</span>
+            </a>
+        </div>
+        <!--end::Menu Item-->
+
+        <!--begin::Menu Item Rekapitulasi-->
+        <div class="menu-item">
+            <a class="menu-link {{ Request::is('absensi/rekapitulasi*') ? 'active' : '' }}" href="{{ route('absensi.rekapitulasi') }}">
+                <span class="menu-icon">
+                    <i class="ki-duotone ki-chart-simple-2 fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span>
+                    </i>
+                </span>
+                <span class="menu-title">Rekapitulasi</span>
+            </a>
+        </div>
+        <!--end::Menu Item-->
+
         <!--begin::Menu Section-->
         <div class="menu-item">
             <div class="menu-content pt-8 pb-2">

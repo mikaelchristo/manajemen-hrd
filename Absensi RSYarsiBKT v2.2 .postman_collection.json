@@ -1,0 +1,471 @@
+{
+  "info": {
+    "_postman_id": "0d805dd4-d4ac-4772-8d15-2c8d081d37b1",
+    "name": "Absensi RSYarsiBKT v2.2 ",
+    "description": "JSON COLLECTION.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "30726607"
+  },
+  "item": [
+    {
+      "name": "1. Datatables",
+      "item": [
+        {
+          "name": "Data Harian",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "draw",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "start",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "length",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "search[value]",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "order[0][column]",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "order[0][dir]",
+                  "value": "asc",
+                  "type": "text"
+                },
+                {
+                  "key": "columns[0][data]",
+                  "value": "nama",
+                  "type": "text"
+                },
+                {
+                  "key": "tanggal",
+                  "value": "2026-01-28",
+                  "type": "text",
+                  "description": "Filter Tanggal"
+                },
+                {
+                  "key": "unit",
+                  "value": "0",
+                  "type": "text",
+                  "description": "Filter Unit ID (0 = Semua)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/getDataHarian",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getDataHarian"
+              ]
+            },
+            "description": "Endpoint untuk mengisi tabel harian (Format Datatables)."
+          },
+          "response": []
+        },
+        {
+          "name": "Data Lembur Bulanan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "draw",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "start",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "length",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "search[value]",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "bulan",
+                  "value": "01",
+                  "type": "text"
+                },
+                {
+                  "key": "tahun",
+                  "value": "2026",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/getDataLembur",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getDataLembur"
+              ]
+            },
+            "description": "Endpoint untuk mengisi tabel lembur bulanan."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Absen Manual",
+      "item": [
+        {
+          "name": "Get List Status Absen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/getStatusList",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getStatusList"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Input Absen Manual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userid\": \"2\",\n    \"tanggal\": \"2026-01-29\",\n    \"status\": \"SAKIT\",\n    \"keterangan\": \"Demam Tinggi\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/inputData",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inputData"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Absen Manual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"absenid\": \"154\",\n    \"tanggal\": \"2026-01-29\",\n    \"status\": \"IZIN\",\n    \"keterangan\": \"Update Keterangan Izin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/updateData",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "updateData"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Hapus Data Absen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"154\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/deleteData",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "deleteData"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Lembur",
+      "item": [
+        {
+          "name": "Input Lembur Manual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userid\": \"2\",\n    \"tanggal\": \"2026-01-28\",\n    \"jammasuk\": \"16:00\",\n    \"jampulang\": \"18:00\",\n    \"keterangan\": \"Lembur Akreditasi\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/inputLembur",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inputLembur"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Lembur Manual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"absenid\": \"155\",\n    \"tanggal\": \"2026-01-28\",\n    \"jammasuk\": \"16:00\",\n    \"jampulang\": \"19:30\",\n    \"keterangan\": \"Revisi Lembur\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/updateLembur",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "updateLembur"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Laporan & Export",
+      "item": [
+        {
+          "name": "Get Export Data (Excel)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/getExportData?tanggal=2026-01-28&unit=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getExportData"
+              ],
+              "query": [
+                {
+                  "key": "tanggal",
+                  "value": "2026-01-28"
+                },
+                {
+                  "key": "unit",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Rekapitulasi User (Range Tanggal)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/getRekapitulasiUser?userid=2&awal=2026-01-01&akhir=2026-01-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getRekapitulasiUser"
+              ],
+              "query": [
+                {
+                  "key": "userid",
+                  "value": "2",
+                  "description": "ID User"
+                },
+                {
+                  "key": "awal",
+                  "value": "2026-01-01",
+                  "description": "Tanggal Awal"
+                },
+                {
+                  "key": "akhir",
+                  "value": "2026-01-31",
+                  "description": "Tanggal Akhir"
+                }
+              ]
+            },
+            "description": "Menampilkan statistik total (Hadir, Sakit, Izin, Cuti, Telat, dll) dari seorang user dalam rentang tanggal tertentu."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Absen Bulanan User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-KEY",
+                "value": "absensiyarsi123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/getAbsenBulanan?idkaryawan=2&bulan=01&tahun=2026",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "getAbsenBulanan"
+              ],
+              "query": [
+                {
+                  "key": "idkaryawan",
+                  "value": "2",
+                  "description": "ID User"
+                },
+                {
+                  "key": "bulan",
+                  "value": "01",
+                  "description": "Bulan (mm)"
+                },
+                {
+                  "key": "tahun",
+                  "value": "2026",
+                  "description": "Tahun (yyyy)"
+                }
+              ]
+            },
+            "description": "Mengambil daftar riwayat absen harian seorang karyawan dalam bulan tertentu."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://absen.ibnusinabkt.id/restapiv2_2/",
+      "type": "string"
+    }
+  ]
+}

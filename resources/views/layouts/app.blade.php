@@ -5,6 +5,7 @@
     <base href="" />
     <title>@yield('title', $appData->nama_app ?? 'SIM RS')</title>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $appData->nama_instansi ?? 'Sistem Informasi Manajemen Rumah Sakit' }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     @if($appData && $appData->favicon)

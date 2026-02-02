@@ -40,10 +40,10 @@ class KaryawanImport implements
             Log::info('Processing row', ['row_keys' => array_keys($row), 'row_data' => $row]);
 
             // Get values directly from row - sesuai dengan header Excel:
-            // NIK KRY | NAMA KARYAWAN | NIK KTP | UNIT | GOL | PROFESI | STATUS PEGAWAI | 
-            // TEMPAT LAHIR | TGL_LAHIR | JENIS KELAMIN | TGL MASUK KERJA | SK TETAP | 
+            // NIK KRY | NAMA KARYAWAN | NIK KTP | UNIT | GOL | PROFESI | STATUS PEGAWAI |
+            // TEMPAT LAHIR | TGL_LAHIR | JENIS KELAMIN | TGL MASUK KERJA | SK TETAP |
             // PENDIDIKAN | TAMATAN | No HP | EMAIL | ALAMAT
-            
+
             $nikKaryawan = $row['nik_kry'] ?? null;
             $namaKaryawan = $row['nama_karyawan'] ?? null;
             $nikKtp = $row['nik_ktp'] ?? null;
@@ -93,7 +93,7 @@ class KaryawanImport implements
 
             // Transform tanggal masuk kerja (buat nullable jika kosong)
             $tglMulaiKerja = !empty($tanggalMasukKerja) ? $this->transformDate($tanggalMasukKerja) : null;
-            
+
             // SK Tetap adalah nomor SK (string), bukan tanggal - jadi langsung simpan sebagai string
             $noSkTetap = !empty($skTetap) ? trim($skTetap) : null;
 
