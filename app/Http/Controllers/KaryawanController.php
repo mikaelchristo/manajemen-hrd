@@ -219,7 +219,7 @@ class KaryawanController extends Controller
                     $umurTahun = (int) $birthDate->diffInYears(now());
                     $umurBulan = (int) $birthDate->diffInMonths(now());
                     $tglLahirFormatted = $birthDate->format('d-m-Y');
-                    
+
                     // Hitung tanggal pensiun (56 tahun dari tanggal lahir)
                     $pensiunDate = $birthDate->copy()->addYears(56);
                     $tglPensiunFormatted = $pensiunDate->format('d-m-Y');
