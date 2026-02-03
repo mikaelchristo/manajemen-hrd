@@ -88,28 +88,28 @@ Route::middleware(['auth'])->group(function () {
         // Halaman utama monitoring absensi harian
         Route::get('/', [AbsensiController::class, 'index'])->name('index');
         Route::post('/getData', [AbsensiController::class, 'getDataHarian'])->name('getData');
-        
+
         // Halaman lembur
         Route::get('/lembur', [AbsensiController::class, 'lembur'])->name('lembur');
         Route::post('/getDataLembur', [AbsensiController::class, 'getDataLembur'])->name('getDataLembur');
-        
+
         // Halaman rekapitulasi
         Route::get('/rekapitulasi', [AbsensiController::class, 'rekapitulasi'])->name('rekapitulasi');
         Route::get('/rekapitulasi/data', [AbsensiController::class, 'getRekapitulasiUser'])->name('rekapitulasi.data');
         Route::get('/bulanan', [AbsensiController::class, 'getAbsenBulanan'])->name('bulanan');
-        
+
         // Get status list
         Route::get('/status-list', [AbsensiController::class, 'getStatusList'])->name('status-list');
-        
+
         // Input/Update/Delete Absen Manual
         Route::post('/input', [AbsensiController::class, 'inputAbsen'])->name('input');
         Route::post('/update', [AbsensiController::class, 'updateAbsen'])->name('update');
         Route::post('/delete', [AbsensiController::class, 'deleteAbsen'])->name('delete');
-        
+
         // Input/Update Lembur
         Route::post('/input-lembur', [AbsensiController::class, 'inputLembur'])->name('inputLembur');
         Route::post('/update-lembur', [AbsensiController::class, 'updateLembur'])->name('updateLembur');
-        
+
         // Export data
         Route::get('/export', [AbsensiController::class, 'exportData'])->name('export');
     });
