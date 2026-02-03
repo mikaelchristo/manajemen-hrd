@@ -236,6 +236,22 @@ class KaryawanController extends Controller
                 }
             }
 
+            // Format untuk input date HTML (YYYY-MM-DD)
+            $tglLahirInput = null;
+            $tglMulaiKerjaInput = null;
+            
+            if ($karyawan->tglLahir) {
+                try {
+                    $tglLahirInput = \Carbon\Carbon::parse($karyawan->tglLahir)->format('Y-m-d');
+                } catch (\Exception $e) {}
+            }
+            
+            if ($karyawan->tglMulaiKerja) {
+                try {
+                    $tglMulaiKerjaInput = \Carbon\Carbon::parse($karyawan->tglMulaiKerja)->format('Y-m-d');
+                } catch (\Exception $e) {}
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -245,6 +261,8 @@ class KaryawanController extends Controller
                     'tgl_lahir_formatted' => $tglLahirFormatted,
                     'tgl_masuk_kerja_formatted' => $tglMulaiKerjaFormatted,
                     'tgl_pensiun_formatted' => $tglPensiunFormatted,
+                    'tgl_lahir_input' => $tglLahirInput,
+                    'tgl_mulai_kerja_input' => $tglMulaiKerjaInput,
                 ]
             ]);
         } catch (\Exception $e) {

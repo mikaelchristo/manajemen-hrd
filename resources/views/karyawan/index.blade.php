@@ -655,7 +655,7 @@ var KTKaryawanList = function() {
             const id = $(this).data('id');
 
             $.ajax({
-                url: `/karyawan/${id}`,
+                url: '{{ url("karyawan") }}/' + id,
                 type: 'GET',
                 success: function(response) {
                     if (response.success) {
@@ -670,8 +670,8 @@ var KTKaryawanList = function() {
                         $('#profesi').val(data.profesi);
                         $('#statusPegawai').val(data.statusPegawai);
                         $('#tempatLahir').val(data.tempatLahir);
-                        $('#tglLahir').val(data.tglLahir);
-                        $('#tglMulaiKerja').val(data.tglMulaiKerja);
+                        $('#tglLahir').val(response.data.tgl_lahir_input || '');
+                        $('#tglMulaiKerja').val(response.data.tgl_mulai_kerja_input || '');
                         $('#jenisKelamin').val(data.jenisKelamin);
                         $('#skTetap').val(data.skTetap);
                         $('#pendidikan').val(data.pendidikan);
@@ -708,7 +708,7 @@ var KTKaryawanList = function() {
             const id = $(this).data('id');
 
             $.ajax({
-                url: `/karyawan/${id}`,
+                url: '{{ url("karyawan") }}/' + id,
                 type: 'GET',
                 success: function(response) {
                     if (response.success) {
@@ -777,7 +777,7 @@ var KTKaryawanList = function() {
             }).then(function(result) {
                 if (result.value) {
                     $.ajax({
-                        url: `/karyawan/${id}`,
+                        url: '{{ url("karyawan") }}/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -840,7 +840,7 @@ var KTKaryawanList = function() {
             submitButton.disabled = true;
 
             const id = $('#karyawan_id').val();
-            const url = id ? `/karyawan/${id}` : '{{ route("karyawan.store") }}';
+            const url = id ? '{{ url("karyawan") }}/' + id : '{{ route("karyawan.store") }}';
             const method = id ? 'PUT' : 'POST';
 
             let formData = {

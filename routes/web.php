@@ -55,13 +55,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [KaryawanController::class, 'index'])->name('index');
         Route::get('/getData', [KaryawanController::class, 'getData'])->name('getData');
         Route::post('/', [KaryawanController::class, 'store'])->name('store');
-        Route::get('/{id}', [KaryawanController::class, 'show'])->name('show');
-        Route::put('/{id}', [KaryawanController::class, 'update'])->name('update');
-        Route::delete('/{id}', [KaryawanController::class, 'destroy'])->name('destroy');
         Route::delete('/delete/all', [KaryawanController::class, 'deleteAll'])->name('delete-all');
         Route::get('/export/excel', [KaryawanController::class, 'export'])->name('export');
         Route::post('/import/excel', [KaryawanController::class, 'import'])->name('import');
         Route::get('/download/template', [KaryawanController::class, 'downloadTemplate'])->name('download-template');
+        // Routes dengan parameter harus di bawah
+        Route::get('/{id}', [KaryawanController::class, 'show'])->name('show');
+        Route::put('/{id}', [KaryawanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [KaryawanController::class, 'destroy'])->name('destroy');
     });
 
     // User Management Routes
