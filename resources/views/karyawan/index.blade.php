@@ -105,7 +105,7 @@
 
             <!--begin::Table-->
             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_karyawan_table">
-                <thead>
+                 <thead class="bg-light-primary">
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
                         <th class="min-w-50px">No</th>
                         <th class="min-w-125px">NIK Karyawan</th>
@@ -117,8 +117,8 @@
                         <th class="min-w-125px">Status</th>
                         <th class="min-w-150px">Tempat Lahir</th>
                         <th class="min-w-125px">Tanggal Lahir</th>
-                        <th class="min-w-100px">Umur Tahun</th>
-                        <th class="min-w-100px">Umur Bulan</th>
+                        <th class="min-w-150px">Umur</th>
+                        <th class="min-w-125px">Tanggal Pensiun</th>
                         <th class="min-w-100px">Jenis Kelamin</th>
                         <th class="min-w-125px">Tgl Masuk Kerja</th>
                         <th class="min-w-125px">SK Tetap</th>
@@ -349,6 +349,12 @@
                             </div>
                         </div>
                         <div class="row mb-7">
+                            <label class="col-lg-4 fw-semibold text-muted">Tanggal Pensiun (56 Tahun)</label>
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" id="detail-tglPensiun"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-7">
                             <label class="col-lg-4 fw-semibold text-muted">Jenis Kelamin</label>
                             <div class="col-lg-8">
                                 <span class="fw-bold fs-6 text-gray-800" id="detail-jenisKelamin"></span>
@@ -517,7 +523,12 @@ var KTKaryawanList = function() {
     var table;
     var dt;
 
+    console.log('=== INITIALIZING KARYAWAN LIST ===');
+
     var initDatatable = function() {
+        console.log('Initializing DataTable...');
+        console.log('Route URL:', "{{ route('karyawan.getData') }}");
+
         dt = $("#kt_karyawan_table").DataTable({
             processing: true,
             serverSide: true,
@@ -527,6 +538,23 @@ var KTKaryawanList = function() {
                 data: function(d) {
                     d.unit = $('#filter_unit').val();
                     d.status = $('#filter_status').val();
+                    console.log('Request data:', d);
+                },
+                dataSrc: function(json) {
+                    console.log('Response received:', json);
+                    return json.data;
+                },
+                error: function(xhr, error, thrown) {
+                    console.error('DataTables Error:', error);
+                    console.error('Response:', xhr.responseText);
+                    console.error('Status:', xhr.status);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Memuat Data',
+                        text: 'Terjadi kesalahan saat mengambil data karyawan. Silakan coba lagi.',
+                        confirmButtonText: 'OK'
+                    });
                 }
             },
             columns: [
@@ -541,7 +569,7 @@ var KTKaryawanList = function() {
                 {data: 'tempatLahir', name: 'tempatLahir'},
                 {data: 'tglLahir', name: 'tglLahir'},
                 {data: 'umur', name: 'umur', orderable: false, searchable: false},
-                {data: 'umur_bulan', name: 'umur_bulan', orderable: false, searchable: false},
+                {data: 'tanggal_pensiun', name: 'tanggal_pensiun', orderable: false, searchable: false},
                 {data: 'jenisKelamin', name: 'jenisKelamin'},
                 {data: 'tglMulaiKerja', name: 'tglMulaiKerja', render: function(data) { return data ? data : '-'; }},
                 {data: 'skTetap', name: 'skTetap', render: function(data) { return data ? data : '-'; }},
@@ -687,15 +715,18 @@ var KTKaryawanList = function() {
                         const data = response.data.karyawan;
                         const umurTahun = response.data.umur_tahun || 0;
                         const umurBulan = response.data.umur_bulan || 0;
+                        const umurBulanSisa = umurBulan % 12;
                         const tglLahirFormatted = response.data.tgl_lahir_formatted || '-';
                         const tglMulaiKerjaFormatted = response.data.tgl_masuk_kerja_formatted || '-';
+                        const tglPensiunFormatted = response.data.tgl_pensiun_formatted || '-';
 
                         // Fill detail modal
                         $('#detail-nikKry').text(data.nikKry || '-');
                         $('#detail-namaKaryawan').text(data.namaKaryawan || '-');
                         $('#detail-nikKtp').text(data.nikKtp || '-');
                         $('#detail-tempatTglLahir').text((data.tempatLahir || '-') + ', ' + tglLahirFormatted);
-                        $('#detail-umur').text(umurTahun + ' tahun (' + umurBulan + ' bulan)');
+                        $('#detail-umur').text(umurTahun + ' tahun ' + umurBulanSisa + ' bulan');
+                        $('#detail-tglPensiun').text(tglPensiunFormatted);
                         $('#detail-jenisKelamin').text(data.jenisKelamin || '-');
                         $('#detail-noHp').text(data.noHp || '-');
                         $('#detail-email').text(data.email || '-');

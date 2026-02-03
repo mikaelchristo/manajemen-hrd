@@ -12,7 +12,7 @@ class AbsensiController extends Controller
      * Base URL API Absensi
      */
     protected $baseUrl = 'https://absen.ibnusinabkt.id/restapiv2_2/';
-    
+
     /**
      * API Key untuk autentikasi
      */
@@ -40,66 +40,102 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Mengambil data absensi harian untuk DataTables
+     * LAYER 1: Menghitung statistik absensi secara manual
+     * Method ini mengambil semua data dan menghitung total per kategori
+     */
+    private function hitungStatistikManual($tanggal, $unit)
+    {
+        // Ambil SEMUA data dari API untuk perhitungan
+        $response = Http::withHeaders([
+            'X-API-KEY' => $this->apiKey,
+        ])->withoutVerifying()->asForm()->post($this->baseUrl . 'getDataHarian', [
+            'draw' => 1,
+            'start' => 0,
+            'length' => -1, // Ambil semua data tanpa pagination
+            'tanggal' => $tanggal,
+            'unit' => $unit,
+        ]);
+
+        // Inisialisasi counter statistik
+        $statistics = [
+            'hadir' => 0,
+            'sakit' => 0,
+            'izin' => 0,
+            'cuti' => 0,
+            'alpha' => 0,
+            'libur' => 0,
+            'total' => 0
+        ];
+
+        if ($response->successful()) {
+            $data = $response->json();
+
+            if (isset($data['data']) && is_array($data['data'])) {
+                $statistics['total'] = count($data['data']);
+
+                // PROSES MANUAL: Hitung satu per satu
+                foreach ($data['data'] as $item) {
+                    $statusCode = strtoupper(trim($item['status'] ?? ''));
+                    $kategori = $item['kategori'] ?? null;
+
+                    // Logika perhitungan berdasarkan status dan kategori
+                    if ($kategori == '1' && empty($statusCode)) {
+                        // Kategori 1 tanpa status = Hadir
+                        $statistics['hadir']++;
+                    } elseif (in_array($statusCode, ['P', 'P6'])) {
+                        // Status P atau P6 = Hadir
+                        $statistics['hadir']++;
+                    } elseif ($statusCode == 'S') {
+                        // Status S = Sakit
+                        $statistics['sakit']++;
+                    } elseif (in_array($statusCode, ['I', 'IPC', 'IPG'])) {
+                        // Status I, IPC, IPG = Izin
+                        $statistics['izin']++;
+                    } elseif ($statusCode == 'C') {
+                        // Status C = Cuti
+                        $statistics['cuti']++;
+                    } elseif ($statusCode == 'L') {
+                        // Status L = Libur
+                        $statistics['libur']++;
+                    } elseif ($statusCode == 'A') {
+                        // Status A = Alpha
+                        $statistics['alpha']++;
+                    } elseif ($kategori == '1') {
+                        // Kategori 1 dengan status tidak dikenali = Hadir
+                        $statistics['hadir']++;
+                    }
+                }
+            }
+
+            Log::info('LAYER 1 - Statistik Manual Berhasil Dihitung', [
+                'tanggal' => $tanggal,
+                'unit' => $unit,
+                'statistics' => $statistics
+            ]);
+        } else {
+            Log::error('LAYER 1 - Gagal mengambil data untuk statistik', [
+                'status_code' => $response->status(),
+                'response' => $response->body()
+            ]);
+        }
+
+        return $statistics;
+    }
+
+    /**
+     * LAYER 2: Mengambil data absensi harian untuk DataTables
+     * Method ini memanggil layer 1 untuk statistik dan mengirim ke view
      */
     public function getDataHarian(Request $request)
     {
         try {
             $tanggal = $request->get('tanggal', date('Y-m-d'));
             $unit = $request->get('unit', 0);
-            
-            // Ambil semua data untuk statistik (tanpa pagination)
-            $statsResponse = Http::withHeaders([
-                'X-API-KEY' => $this->apiKey,
-            ])->withoutVerifying()->asForm()->post($this->baseUrl . 'getDataHarian', [
-                'draw' => 1,
-                'start' => 0,
-                'length' => -1, // Get all data for statistics
-                'tanggal' => $tanggal,
-                'unit' => $unit,
-            ]);
-            
-            $statistics = ['hadir' => 0, 'sakit' => 0, 'izin' => 0, 'cuti' => 0, 'alpha' => 0, 'libur' => 0];
-            
-            if ($statsResponse->successful()) {
-                $statsData = $statsResponse->json();
-                if (isset($statsData['data']) && is_array($statsData['data'])) {
-                    foreach ($statsData['data'] as $item) {
-                        $statusCode = $item['status'] ?? null;
-                        $kategori = $item['kategori'] ?? null;
-                        
-                        if ($kategori == '1' && empty($statusCode)) {
-                            $statistics['hadir']++;
-                        } else {
-                            switch ($statusCode) {
-                                case 'S':
-                                    $statistics['sakit']++;
-                                    break;
-                                case 'I':
-                                case 'IPC':
-                                case 'IPG':
-                                    $statistics['izin']++;
-                                    break;
-                                case 'C':
-                                    $statistics['cuti']++;
-                                    break;
-                                case 'L':
-                                    $statistics['libur']++;
-                                    break;
-                                case 'A':
-                                    $statistics['alpha']++;
-                                    break;
-                                default:
-                                    if ($kategori == '1') {
-                                        $statistics['hadir']++;
-                                    }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Ambil data untuk tabel dengan pagination
+
+            // LAYER 1: Hitung statistik secara manual
+            $statistics = $this->hitungStatistikManual($tanggal, $unit);
+
+            // LAYER 2: Ambil data dengan pagination untuk tabel
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
             ])->withoutVerifying()->asForm()->post($this->baseUrl . 'getDataHarian', [
@@ -116,14 +152,14 @@ class AbsensiController extends Controller
 
             if ($response->successful()) {
                 $result = $response->json();
-                
+
                 // Transform data untuk menyesuaikan dengan view
                 if (isset($result['data']) && is_array($result['data'])) {
                     $result['data'] = array_map(function($item) {
                         // Determine status based on kategori and status field
                         $statusCode = $item['status'] ?? null;
                         $kategori = $item['kategori'] ?? null;
-                        
+
                         // Jika kategori = 1 dan status null, artinya HADIR
                         if ($kategori == '1' && empty($statusCode)) {
                             $statusDisplay = 'HADIR';
@@ -131,7 +167,7 @@ class AbsensiController extends Controller
                         } else {
                             $statusDisplay = $this->mapStatus($statusCode);
                         }
-                        
+
                         return [
                             'id' => $item['id'] ?? null,
                             'userid' => $item['username'] ?? null,
@@ -152,10 +188,16 @@ class AbsensiController extends Controller
                         ];
                     }, $result['data']);
                 }
-                
-                // Add statistics to response
+
+                // LAYER 2: Tambahkan statistik yang sudah dihitung di Layer 1
                 $result['statistics'] = $statistics;
-                
+
+                Log::info('LAYER 2 - Response Final', [
+                    'has_statistics' => isset($result['statistics']),
+                    'statistics' => $result['statistics'],
+                    'data_count' => count($result['data'] ?? [])
+                ]);
+
                 return response()->json($result);
             }
 
@@ -188,7 +230,7 @@ class AbsensiController extends Controller
     private function mapStatus($code)
     {
         if (empty($code)) return 'HADIR';
-        
+
         $statusMap = [
             'A' => 'ABSEN',
             'C' => 'CUTI',
@@ -200,7 +242,7 @@ class AbsensiController extends Controller
             'P' => 'HADIR',
             'P6' => 'HADIR',
         ];
-        
+
         return $statusMap[$code] ?? $code;
     }
 
@@ -226,7 +268,7 @@ class AbsensiController extends Controller
         try {
             $bulan = $request->get('bulan', date('m'));
             $tahun = $request->get('tahun', date('Y'));
-            
+
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
             ])->withoutVerifying()->asForm()->post($this->baseUrl . 'getDataLembur', [
@@ -240,7 +282,7 @@ class AbsensiController extends Controller
 
             if ($response->successful()) {
                 $result = $response->json();
-                
+
                 // Transform data untuk menyesuaikan dengan view
                 if (isset($result['data']) && is_array($result['data'])) {
                     $result['data'] = array_map(function($item) {
@@ -258,7 +300,7 @@ class AbsensiController extends Controller
                         ];
                     }, $result['data']);
                 }
-                
+
                 return response()->json($result);
             }
 
@@ -572,7 +614,7 @@ class AbsensiController extends Controller
             $userid = $request->get('userid');
             $awal = $request->get('awal');
             $akhir = $request->get('akhir');
-            
+
             // Inisialisasi statistik
             $statistics = [
                 'hadir' => 0,
@@ -583,18 +625,18 @@ class AbsensiController extends Controller
                 'telat' => 0,
                 'libur' => 0,
             ];
-            
+
             $historyData = [];
-            
+
             // Loop melalui setiap tanggal dalam rentang
             $startDate = new \DateTime($awal);
             $endDate = new \DateTime($akhir);
             $interval = new \DateInterval('P1D');
             $dateRange = new \DatePeriod($startDate, $interval, $endDate->modify('+1 day'));
-            
+
             foreach ($dateRange as $date) {
                 $tanggal = $date->format('Y-m-d');
-                
+
                 // Ambil data harian untuk tanggal ini
                 $response = Http::withHeaders([
                     'X-API-KEY' => $this->apiKey,
@@ -605,18 +647,18 @@ class AbsensiController extends Controller
                     'tanggal' => $tanggal,
                     'unit' => 0,
                 ]);
-                
+
                 if ($response->successful()) {
                     $result = $response->json();
                     $allData = $result['data'] ?? [];
-                    
+
                     // Cari data karyawan berdasarkan userid (username/NIK KTP)
                     foreach ($allData as $item) {
                         if (($item['username'] ?? '') == $userid) {
                             $statusCode = $item['status'] ?? null;
                             $kategori = $item['kategori'] ?? null;
                             $terlambat = $item['terlambat'] ?? null;
-                            
+
                             // Hitung status
                             if ($kategori == '1' && empty($statusCode)) {
                                 $statistics['hadir']++;
@@ -648,12 +690,12 @@ class AbsensiController extends Controller
                                         }
                                 }
                             }
-                            
+
                             // Hitung telat
                             if (!empty($terlambat) && $terlambat > 0) {
                                 $statistics['telat']++;
                             }
-                            
+
                             // Simpan untuk history
                             $historyData[] = [
                                 'tanggal' => $item['tanggal'] ?? $tanggal,
@@ -664,13 +706,13 @@ class AbsensiController extends Controller
                                 'keterangan' => $item['keterangan'] ?? null,
                                 'terlambat' => $terlambat,
                             ];
-                            
+
                             break; // Found the user, move to next date
                         }
                     }
                 }
             }
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $statistics,
@@ -717,19 +759,19 @@ class AbsensiController extends Controller
             if ($response->successful()) {
                 $result = $response->json();
                 $apiData = $result['data'] ?? [];
-                
+
                 // Transform each record
                 $transformedData = array_map(function($item) {
                     $statusCode = $item['status'] ?? null;
                     $kategori = $item['kategori'] ?? null;
-                    
+
                     // Determine status display
                     if ($kategori == '1' && empty($statusCode)) {
                         $statusDisplay = 'HADIR';
                     } else {
                         $statusDisplay = $this->mapStatus($statusCode);
                     }
-                    
+
                     return [
                         'tanggal' => $item['tanggal'] ?? null,
                         'jammasuk' => $item['jammasuk'] ?? null,
@@ -739,7 +781,7 @@ class AbsensiController extends Controller
                         'keterangan' => $item['keterangan'] ?? null,
                     ];
                 }, $apiData);
-                
+
                 return response()->json([
                     'success' => true,
                     'data' => $transformedData

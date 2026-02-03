@@ -5,51 +5,6 @@
 @section('content')
 <!--begin::Container-->
 <div class="container-xxl" id="kt_content_container">
-    <!--begin::Stats-->
-    <div class="row g-5 g-xl-8 mb-5">
-        <!--begin::Col-->
-        <div class="col-xl-3">
-            <div class="card card-xl-stretch mb-xl-8" style="background: linear-gradient(112.14deg, #00D2FF 0%, #3A7BD5 100%);">
-                <div class="card-body">
-                    <span class="text-white fs-7 fw-semibold">Total Hadir</span>
-                    <div class="text-white fs-2x fw-bold" id="stat-hadir">-</div>
-                </div>
-            </div>
-        </div>
-        <!--end::Col-->
-        <!--begin::Col-->
-        <div class="col-xl-3">
-            <div class="card card-xl-stretch mb-xl-8" style="background: linear-gradient(112.14deg, #FF5858 0%, #F857A6 100%);">
-                <div class="card-body">
-                    <span class="text-white fs-7 fw-semibold">Total Sakit</span>
-                    <div class="text-white fs-2x fw-bold" id="stat-sakit">-</div>
-                </div>
-            </div>
-        </div>
-        <!--end::Col-->
-        <!--begin::Col-->
-        <div class="col-xl-3">
-            <div class="card card-xl-stretch mb-xl-8" style="background: linear-gradient(112.14deg, #F4D03F 0%, #16A085 100%);">
-                <div class="card-body">
-                    <span class="text-white fs-7 fw-semibold">Total Izin</span>
-                    <div class="text-white fs-2x fw-bold" id="stat-izin">-</div>
-                </div>
-            </div>
-        </div>
-        <!--end::Col-->
-        <!--begin::Col-->
-        <div class="col-xl-3">
-            <div class="card card-xl-stretch mb-xl-8" style="background: linear-gradient(112.14deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body">
-                    <span class="text-white fs-7 fw-semibold">Total Cuti</span>
-                    <div class="text-white fs-2x fw-bold" id="stat-cuti">-</div>
-                </div>
-            </div>
-        </div>
-        <!--end::Col-->
-    </div>
-    <!--end::Stats-->
-
     <!--begin::Card-->
     <div class="card">
         <!--begin::Card header-->
@@ -118,6 +73,92 @@
                     </button>
                 </div>
             </div>
+            <!--end::Filter-->
+
+            <!--begin::Stats (Di bawah filter)-->
+            <div class="row g-5 g-xl-8 mb-5">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #00D2FF 0%, #3A7BD5 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-check-circle fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Total Hadir</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-hadir">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #FF5858 0%, #F857A6 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-thermometer fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Total Sakit</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-sakit">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #F4D03F 0%, #16A085 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-document fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Total Izin</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-izin">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #667eea 0%, #764ba2 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-calendar fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Total Cuti</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-cuti">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Stats-->
             <!--end::Filter-->
 
             <!--begin::Table-->
@@ -246,6 +287,8 @@
             }
         });
 
+        console.log('=== SISTEM 2 LAYER DIMULAI ===');
+
         // Initialize DataTable
         var table = $('#kt_absensi_table').DataTable({
             processing: true,
@@ -257,13 +300,38 @@
                     d.tanggal = $('#filter_tanggal').val();
                     d.unit = $('#filter_unit').val();
                 },
+                dataSrc: function(json) {
+                    // LAYER 2: Terima dan tampilkan statistik dari backend
+                    console.log('Response dari backend:', json);
+
+                    if (json && json.statistics) {
+                        console.log('Statistik diterima:', json.statistics);
+
+                        // Update tampilan statistik
+                        $('#stat-hadir').text(json.statistics.hadir || 0);
+                        $('#stat-sakit').text(json.statistics.sakit || 0);
+                        $('#stat-izin').text(json.statistics.izin || 0);
+                        $('#stat-cuti').text(json.statistics.cuti || 0);
+
+                        console.log('Statistik berhasil ditampilkan');
+                    } else {
+                        console.warn('Statistik tidak ditemukan dalam response');
+                        // Set ke 0 jika tidak ada data
+                        $('#stat-hadir').text('0');
+                        $('#stat-sakit').text('0');
+                        $('#stat-izin').text('0');
+                        $('#stat-cuti').text('0');
+                    }
+
+                    return json.data;
+                },
                 error: function(xhr, error, thrown) {
-                    console.log('Ajax error:', xhr.responseText);
+                    console.error('Ajax error:', xhr.responseText);
                     Swal.fire('Error', 'Gagal memuat data: ' + (xhr.responseJSON?.message || error), 'error');
                 }
             },
             columns: [
-                { 
+                {
                     data: null,
                     orderable: false,
                     searchable: false,
@@ -274,8 +342,8 @@
                 { data: 'nama', name: 'nama' },
                 { data: 'nik', name: 'nik', defaultContent: '-' },
                 { data: 'unit', name: 'unit', defaultContent: '-' },
-                { 
-                    data: 'shift', 
+                {
+                    data: 'shift',
                     name: 'shift',
                     defaultContent: '-',
                     render: function(data) {
@@ -285,8 +353,8 @@
                         return '-';
                     }
                 },
-                { 
-                    data: 'jammasuk', 
+                {
+                    data: 'jammasuk',
                     name: 'jammasuk',
                     defaultContent: '-',
                     render: function(data) {
@@ -296,8 +364,8 @@
                         return '<span class="badge badge-light-secondary">-</span>';
                     }
                 },
-                { 
-                    data: 'jampulang', 
+                {
+                    data: 'jampulang',
                     name: 'jampulang',
                     defaultContent: '-',
                     render: function(data) {
@@ -307,8 +375,8 @@
                         return '<span class="badge badge-light-secondary">-</span>';
                     }
                 },
-                { 
-                    data: 'status', 
+                {
+                    data: 'status',
                     name: 'status',
                     defaultContent: '-',
                     render: function(data) {
@@ -343,8 +411,8 @@
                     render: function(data, type, row) {
                         return `
                             <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-sm btn-icon btn-light-info me-2 btn-detail" 
-                                    data-id="${row.id || ''}" 
+                                <button type="button" class="btn btn-sm btn-icon btn-light-info me-2 btn-detail"
+                                    data-id="${row.id || ''}"
                                     data-nama="${row.nama || ''}"
                                     data-unit="${row.unit || ''}"
                                     data-jammasuk="${row.jammasuk || ''}"
@@ -358,7 +426,7 @@
                                         <span class="path3"></span>
                                     </i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-icon btn-light-primary me-2 btn-edit" 
+                                <button type="button" class="btn btn-sm btn-icon btn-light-primary me-2 btn-edit"
                                     data-id="${row.id || ''}"
                                     data-userid="${row.userid || ''}"
                                     data-status="${row.status || ''}"
@@ -369,8 +437,8 @@
                                         <span class="path2"></span>
                                     </i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-icon btn-light-danger btn-delete" 
-                                    data-id="${row.id || ''}" 
+                                <button type="button" class="btn btn-sm btn-icon btn-light-danger btn-delete"
+                                    data-id="${row.id || ''}"
                                     title="Hapus">
                                     <i class="ki-duotone ki-trash fs-3">
                                         <span class="path1"></span>
@@ -402,18 +470,11 @@
                     next: "Selanjutnya",
                     last: "Terakhir"
                 }
-            },
-            drawCallback: function(settings) {
-                // Update statistics dari response API jika ada
-                var response = settings.json;
-                if (response && response.statistics) {
-                    $('#stat-hadir').text(response.statistics.hadir || 0);
-                    $('#stat-sakit').text(response.statistics.sakit || 0);
-                    $('#stat-izin').text(response.statistics.izin || 0);
-                    $('#stat-cuti').text(response.statistics.cuti || 0);
-                }
             }
         });
+
+        // Inisialisasi tampilan statistik
+        console.log('Tabel DataTable initialized');
 
         // Search
         $('#kt_search').on('keyup', function() {
@@ -422,7 +483,10 @@
 
         // Filter
         $('#btn-filter').on('click', function() {
-            table.ajax.reload();
+            console.log('Filter button clicked');
+            table.ajax.reload(function(json) {
+                console.log('Data reloaded after filter:', json);
+            });
         });
 
         // Detail button
@@ -478,7 +542,10 @@
                         success: function(response) {
                             if (response.success) {
                                 Swal.fire('Berhasil!', response.message, 'success');
-                                table.ajax.reload();
+                                // Reload tabel dan statistik
+                                table.ajax.reload(function() {
+                                    console.log('Data dan statistik di-reload setelah delete');
+                                });
                             } else {
                                 Swal.fire('Gagal!', response.message, 'error');
                             }
@@ -531,7 +598,10 @@
                     if (response.success) {
                         $('#modal-absen').modal('hide');
                         Swal.fire('Berhasil!', response.message, 'success');
-                        table.ajax.reload();
+                        // Reload tabel dan statistik
+                        table.ajax.reload(function() {
+                            console.log('Data dan statistik di-reload setelah save');
+                        });
                     } else {
                         Swal.fire('Gagal!', response.message, 'error');
                     }
