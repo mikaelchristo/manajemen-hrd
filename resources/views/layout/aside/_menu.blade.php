@@ -13,7 +13,7 @@
 
         <!--begin::Menu Item Dashboard-->
         <div class="menu-item">
-            <a class="menu-link {{ Request::is('/') ? 'active' : '' }}" href="/">
+            <a class="menu-link {{ Request::is('/') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                 <span class="menu-icon">
                     <i class="ki-duotone ki-element-11 fs-2">
                         <span class="path1"></span>

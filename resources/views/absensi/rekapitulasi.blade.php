@@ -252,12 +252,12 @@
                 success: function(response) {
                     Swal.close();
                     $btn.removeAttr('data-kt-indicator').prop('disabled', false);
-                    
+
                     console.log('Rekapitulasi response:', response);
-                    
+
                     if (response.success && response.data) {
                         var data = response.data;
-                        
+
                         // Update stats
                         $('#rekap-hadir').text(data.hadir || 0);
                         $('#rekap-sakit').text(data.sakit || 0);
@@ -276,7 +276,7 @@
 
                         // Load history untuk bulan/tahun yang dipilih
                         displayHistoryForMonth();
-                        
+
                         // Update subtitle
                         var namaKaryawan = $('#filter_karyawan option:selected').text();
                         $('#history-subtitle').text(namaKaryawan);
@@ -301,12 +301,12 @@
 
             var bulan = $('#history_bulan').val();
             var tahun = $('#history_tahun').val();
-            
+
             // Hitung tanggal awal dan akhir bulan
             var awal = tahun + '-' + bulan + '-01';
             var lastDay = new Date(tahun, parseInt(bulan), 0).getDate();
             var akhir = tahun + '-' + bulan + '-' + (lastDay < 10 ? '0' : '') + lastDay;
-            
+
             var $btn = $('#btn-load-history');
             $btn.attr('data-kt-indicator', 'on').prop('disabled', true);
 
@@ -332,11 +332,11 @@
                 success: function(response) {
                     Swal.close();
                     $btn.removeAttr('data-kt-indicator').prop('disabled', false);
-                    
+
                     if (response.success && response.history) {
                         currentHistory = response.history;
                         displayHistoryForMonth();
-                        
+
                         var namaKaryawan = $('#filter_karyawan option:selected').text();
                         $('#history-subtitle').text(namaKaryawan + ' - ' + getMonthName(bulan) + ' ' + tahun);
                     } else {
@@ -355,24 +355,24 @@
             var bulan = $('#history_bulan').val();
             var tahun = $('#history_tahun').val();
             var filterPrefix = tahun + '-' + bulan;
-            
+
             var html = '';
             var filteredData = currentHistory.filter(function(item) {
                 return item.tanggal && item.tanggal.startsWith(filterPrefix);
             });
-            
+
             // Sort by tanggal
             filteredData.sort(function(a, b) {
                 return new Date(a.tanggal) - new Date(b.tanggal);
             });
-            
+
             if (filteredData.length > 0) {
                 filteredData.forEach(function(item, index) {
                     var statusBadge = getStatusBadge(item.status);
                     var tanggal = formatDate(item.tanggal);
                     var jamMasuk = item.jammasuk || '-';
                     var jamPulang = item.jampulang || '-';
-                    
+
                     html += '<tr>' +
                         '<td>' + (index + 1) + '</td>' +
                         '<td>' + tanggal + '</td>' +
@@ -387,24 +387,24 @@
             }
 
             $('#history-body').html(html);
-            
+
             var namaKaryawan = $('#filter_karyawan option:selected').text();
             $('#history-subtitle').text(namaKaryawan + ' - ' + getMonthName(bulan) + ' ' + tahun);
         }
 
         function getStatusBadge(status) {
             if (!status) return '<span class="badge badge-light-secondary">-</span>';
-            
+
             var badgeClass = 'light-secondary';
             var statusUpper = status.toUpperCase();
-            
+
             if (statusUpper === 'HADIR') badgeClass = 'success';
             else if (statusUpper === 'SAKIT') badgeClass = 'danger';
             else if (statusUpper.indexOf('IZIN') >= 0) badgeClass = 'warning';
             else if (statusUpper === 'CUTI') badgeClass = 'info';
             else if (statusUpper === 'ALPHA' || statusUpper === 'ABSEN') badgeClass = 'dark';
             else if (statusUpper === 'LIBUR') badgeClass = 'secondary';
-            
+
             return '<span class="badge badge-' + badgeClass + '">' + status + '</span>';
         }
 
@@ -416,12 +416,48 @@
         }
 
         function getMonthName(month) {
-            var months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+            var months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             return months[parseInt(month)] || '';
         }
 
         function loadKaryawanOptions() {
+            console.log('Loading karyawan options...');
+            $('#filter_karyawan').html('<option value="">Memuat data karyawan...</option>');
+
+            $.ajax({
+                url: "{{ route('absensi.user-list') }}",
+                type: 'GET',
+                timeout: 30000,
+                success: function(response) {
+                    console.log('User list response:', response);
+                    var options = '<option value="">-- Pilih Karyawan --</option>';
+                    if (response.success && response.data && response.data.length > 0) {
+                        response.data.forEach(function(item) {
+                            // Use username (NIK KTP) as value for API rekapitulasi
+                            var displayName = (item.nik || '-') + ' - ' + (item.nama || item.name || '-');
+                            options += '<option value="' + (item.username || '') + '">' + displayName + '</option>';
+                        });
+                        console.log('Loaded ' + response.data.length + ' karyawan');
+                    } else {
+                        console.log('No data or empty response, fallback to local');
+                        loadKaryawanFromLocal();
+                        return;
+                    }
+                    $('#filter_karyawan').html(options);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading karyawan from API:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    console.log('Fallback to local karyawan data...');
+                    loadKaryawanFromLocal();
+                }
+            });
+        }
+
+        // Fallback: Load karyawan dari database lokal
+        function loadKaryawanFromLocal() {
             $.ajax({
                 url: "{{ route('karyawan.getData') }}",
                 type: 'GET',
@@ -436,6 +472,7 @@
                                 options += '<option value="' + item.nikKtp + '">' + displayName + '</option>';
                             }
                         });
+                        console.log('Loaded ' + response.data.length + ' karyawan from local');
                     }
                     $('#filter_karyawan').html(options);
                 },

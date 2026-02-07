@@ -98,8 +98,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/rekapitulasi/data', [AbsensiController::class, 'getRekapitulasiUser'])->name('rekapitulasi.data');
         Route::get('/bulanan', [AbsensiController::class, 'getAbsenBulanan'])->name('bulanan');
 
-        // Get status list
+        // Get data master dari API
         Route::get('/status-list', [AbsensiController::class, 'getStatusList'])->name('status-list');
+        Route::get('/unit-list', [AbsensiController::class, 'getUnitList'])->name('unit-list');
+        Route::get('/user-list', [AbsensiController::class, 'getUserList'])->name('user-list');
 
         // Input/Update/Delete Absen Manual
         Route::post('/input', [AbsensiController::class, 'inputAbsen'])->name('input');

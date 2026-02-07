@@ -446,6 +446,88 @@
                     <!--end::Card body-->
                 </div>
                 <!--end::Card-->
+
+                <!--begin::Card Statistik Absensi-->
+                <div class="card mb-5 mb-xl-10">
+                    <!--begin::Card header-->
+                    <div class="card-header border-0 cursor-pointer">
+                        <div class="card-title m-0">
+                            <h3 class="fw-bold m-0">Statistik Absensi Bulan Ini</h3>
+                        </div>
+                        <div class="card-toolbar">
+                            <span class="badge badge-light-info fs-7" id="stat-periode">-</span>
+                        </div>
+                    </div>
+                    <!--end::Card header-->
+                    <!--begin::Card body-->
+                    <div class="card-body border-top p-9">
+                        <div id="stat-loading" class="text-center py-5" style="display: none;">
+                            <span class="spinner-border spinner-border-sm me-2"></span> Memuat statistik...
+                        </div>
+                        <div id="stat-content">
+                            <div class="row g-4">
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 bg-success bg-opacity-10 border border-success border-dashed">
+                                        <div class="card-body text-center py-5">
+                                            <span class="text-success fs-7 fw-semibold">Hadir</span>
+                                            <div class="text-success fs-2x fw-bold" id="stat-hadir">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 bg-danger bg-opacity-10 border border-danger border-dashed">
+                                        <div class="card-body text-center py-5">
+                                            <span class="text-danger fs-7 fw-semibold">Sakit</span>
+                                            <div class="text-danger fs-2x fw-bold" id="stat-sakit">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 bg-warning bg-opacity-10 border border-warning border-dashed">
+                                        <div class="card-body text-center py-5">
+                                            <span class="text-warning fs-7 fw-semibold">Izin</span>
+                                            <div class="text-warning fs-2x fw-bold" id="stat-izin">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 bg-info bg-opacity-10 border border-info border-dashed">
+                                        <div class="card-body text-center py-5">
+                                            <span class="text-info fs-7 fw-semibold">Cuti</span>
+                                            <div class="text-info fs-2x fw-bold" id="stat-cuti">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 bg-dark bg-opacity-10 border border-dark border-dashed">
+                                        <div class="card-body text-center py-5">
+                                            <span class="text-dark fs-7 fw-semibold">Alpha</span>
+                                            <div class="text-dark fs-2x fw-bold" id="stat-alpha">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 col-lg-2">
+                                    <div class="card card-flush h-100 border border-secondary border-dashed" style="background: rgba(243, 156, 18, 0.1);">
+                                        <div class="card-body text-center py-5">
+                                            <span class="fs-7 fw-semibold" style="color: #f39c12;">Telat</span>
+                                            <div class="fs-2x fw-bold" style="color: #f39c12;" id="stat-telat">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="stat-error" class="alert alert-warning mt-3" style="display: none;">
+                            <i class="ki-duotone ki-information fs-2 text-warning me-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                            <span id="stat-error-msg">Tidak dapat memuat statistik absensi</span>
+                        </div>
+                    </div>
+                    <!--end::Card body-->
+                </div>
+                <!--end::Card Statistik Absensi-->
             </div>
         </div>
     </div>
@@ -569,7 +651,7 @@ var KTKaryawanList = function() {
                 {data: 'tempatLahir', name: 'tempatLahir'},
                 {data: 'tglLahir', name: 'tglLahir'},
                 {data: 'umur', name: 'umur', orderable: false, searchable: false},
-                {data: 'tanggal_pensiun', name: 'tanggal_pensiun', orderable: false, searchable: false},
+                {data: 'tanggal_pensiun', name: 'tglLahir', orderable: true, searchable: false},
                 {data: 'jenisKelamin', name: 'jenisKelamin'},
                 {data: 'tglMulaiKerja', name: 'tglMulaiKerja', render: function(data) { return data ? data : '-'; }},
                 {data: 'skTetap', name: 'skTetap', render: function(data) { return data ? data : '-'; }},
@@ -740,6 +822,15 @@ var KTKaryawanList = function() {
                         $('#detail-pendidikan').text(data.pendidikan || '-');
                         $('#detail-tamatan').text(data.tamatan || '-');
 
+                        // Load statistik absensi jika NIK KTP tersedia
+                        if (data.nikKtp) {
+                            loadStatistikAbsensi(data.nikKtp);
+                        } else {
+                            resetStatistik();
+                            $('#stat-error').show();
+                            $('#stat-error-msg').text('NIK KTP tidak tersedia');
+                        }
+
                         $('#modal-detail').modal('show');
                     }
                 },
@@ -757,6 +848,67 @@ var KTKaryawanList = function() {
             });
         });
     };
+
+    // Load statistik absensi karyawan
+    function loadStatistikAbsensi(nikKtp) {
+        // Reset dan tampilkan loading
+        resetStatistik();
+        $('#stat-loading').show();
+        $('#stat-content').hide();
+        $('#stat-error').hide();
+
+        // Hitung tanggal awal dan akhir bulan ini
+        var now = new Date();
+        var awal = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-01';
+        var lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        var akhir = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(lastDay).padStart(2, '0');
+
+        // Update periode label
+        var bulanNama = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $('#stat-periode').text(bulanNama[now.getMonth() + 1] + ' ' + now.getFullYear());
+
+        $.ajax({
+            url: "{{ route('absensi.rekapitulasi.data') }}",
+            type: 'GET',
+            data: {
+                userid: nikKtp,
+                awal: awal,
+                akhir: akhir
+            },
+            timeout: 60000,
+            success: function(response) {
+                $('#stat-loading').hide();
+                $('#stat-content').show();
+
+                if (response.success && response.data) {
+                    var data = response.data;
+                    $('#stat-hadir').text(data.hadir || 0);
+                    $('#stat-sakit').text(data.sakit || 0);
+                    $('#stat-izin').text(data.izin || 0);
+                    $('#stat-cuti').text(data.cuti || 0);
+                    $('#stat-alpha').text(data.alpha || 0);
+                    $('#stat-telat').text(data.telat || 0);
+                } else {
+                    $('#stat-error').show();
+                    $('#stat-error-msg').text('Data statistik tidak tersedia');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#stat-loading').hide();
+                $('#stat-content').show();
+                $('#stat-error').show();
+                $('#stat-error-msg').text('Gagal memuat statistik: ' + (status === 'timeout' ? 'Request timeout' : error));
+            }
+        });
+    }
+
+    // Reset statistik values
+    function resetStatistik() {
+        $('#stat-hadir, #stat-sakit, #stat-izin, #stat-cuti, #stat-alpha, #stat-telat').text('0');
+        $('#stat-loading').hide();
+        $('#stat-error').hide();
+    }
 
     // Handle Delete
     var handleDeleteRows = function() {

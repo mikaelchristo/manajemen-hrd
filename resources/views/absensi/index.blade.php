@@ -8,7 +8,6 @@
     <!--begin::Card-->
     <div class="card">
         <!--begin::Card header-->
-        <h1>absensi </h1>
         <div class="card-header border-0 pt-6">
             <div class="card-title">
                 <!--begin::Search-->
@@ -58,9 +57,7 @@
                     <label class="form-label">Filter Unit</label>
                     <select class="form-select form-select-solid" id="filter_unit">
                         <option value="0">Semua Unit</option>
-                        @foreach($units as $unit)
-                            <option value="{{ $unit }}">{{ $unit }}</option>
-                        @endforeach
+                        <!-- Options akan di-load dari API -->
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -77,8 +74,8 @@
             <!--end::Filter-->
 
             <!--begin::Stats (Di bawah filter)-->
-            {{-- <div class="row g-5 g-xl-8 mb-5">
-                <div class="col-xl-3 col-md-6">
+            <div class="row g-5 g-xl-8 mb-5">
+                <div class="col-xl-2 col-md-4 col-6">
                     <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #00D2FF 0%, #3A7BD5 100%);">
                         <div class="card-body py-4">
                             <div class="d-flex align-items-center">
@@ -91,14 +88,14 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span class="text-white fs-7 fw-semibold d-block">Total Hadir</span>
-                                    <span class="text-white fs-2x fw-bold" id="stat-hadir">-</span>
+                                    <span class="text-white fs-7 fw-semibold d-block">Hadir</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-hadir">0</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6">
+                <div class="col-xl-2 col-md-4 col-6">
                     <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #FF5858 0%, #F857A6 100%);">
                         <div class="card-body py-4">
                             <div class="d-flex align-items-center">
@@ -111,14 +108,14 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span class="text-white fs-7 fw-semibold d-block">Total Sakit</span>
-                                    <span class="text-white fs-2x fw-bold" id="stat-sakit">-</span>
+                                    <span class="text-white fs-7 fw-semibold d-block">Sakit</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-sakit">0</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6">
+                <div class="col-xl-2 col-md-4 col-6">
                     <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #F4D03F 0%, #16A085 100%);">
                         <div class="card-body py-4">
                             <div class="d-flex align-items-center">
@@ -131,14 +128,14 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span class="text-white fs-7 fw-semibold d-block">Total Izin</span>
-                                    <span class="text-white fs-2x fw-bold" id="stat-izin">-</span>
+                                    <span class="text-white fs-7 fw-semibold d-block">Izin</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-izin">0</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6">
+                <div class="col-xl-2 col-md-4 col-6">
                     <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #667eea 0%, #764ba2 100%);">
                         <div class="card-body py-4">
                             <div class="d-flex align-items-center">
@@ -151,16 +148,55 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span class="text-white fs-7 fw-semibold d-block">Total Cuti</span>
-                                    <span class="text-white fs-2x fw-bold" id="stat-cuti">-</span>
+                                    <span class="text-white fs-7 fw-semibold d-block">Cuti</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-cuti">0</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div> --}}
+                <div class="col-xl-2 col-md-4 col-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #232526 0%, #414345 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-cross-circle fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Alpha</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-alpha">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-6">
+                    <div class="card card-xl-stretch" style="background: linear-gradient(112.14deg, #7F7FD5 0%, #86A8E7 50%, #91EAE4 100%);">
+                        <div class="card-body py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <span class="symbol-label bg-white bg-opacity-20">
+                                        <i class="ki-duotone ki-home fs-1 text-white">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span class="text-white fs-7 fw-semibold d-block">Libur</span>
+                                    <span class="text-white fs-2x fw-bold" id="stat-libur">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--end::Stats-->
-            <!--end::Filter-->
 
             <!--begin::Table-->
             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_absensi_table">
@@ -313,6 +349,8 @@
                         $('#stat-sakit').text(json.statistics.sakit || 0);
                         $('#stat-izin').text(json.statistics.izin || 0);
                         $('#stat-cuti').text(json.statistics.cuti || 0);
+                        $('#stat-alpha').text(json.statistics.alpha || 0);
+                        $('#stat-libur').text(json.statistics.libur || 0);
 
                         console.log('Statistik berhasil ditampilkan');
                     } else {
@@ -322,6 +360,8 @@
                         $('#stat-sakit').text('0');
                         $('#stat-izin').text('0');
                         $('#stat-cuti').text('0');
+                        $('#stat-alpha').text('0');
+                        $('#stat-libur').text('0');
                     }
 
                     return json.data;
@@ -629,17 +669,89 @@
         loadKaryawanOptions();
     });
 
-    function loadKaryawanOptions() {
-        // Load from local karyawan data
-        $.get("{{ route('karyawan.getData') }}", { length: -1 }, function(response) {
-            var options = '<option value="">Pilih Karyawan</option>';
-            if (response.data && response.data.length > 0) {
-                response.data.forEach(function(item) {
-                    options += '<option value="' + item.id + '">' + item.nikKaryawan + ' - ' + item.namaKaryawan + '</option>';
-                });
+    // Load daftar unit dari API
+    function loadUnitOptions() {
+        $.ajax({
+            url: "{{ route('absensi.unit-list') }}",
+            type: 'GET',
+            success: function(response) {
+                var options = '<option value="0">Semua Unit</option>';
+                if (response.success && response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        options += '<option value="' + (item.id || item.unitid) + '">' + (item.nama || item.namaunit || item.unit) + '</option>';
+                    });
+                }
+                $('#filter_unit').html(options);
+            },
+            error: function() {
+                console.error('Gagal load daftar unit dari API');
             }
-            $('#select_karyawan').html(options);
         });
     }
+
+    function loadKaryawanOptions() {
+        // Load from API absensi
+        $.ajax({
+            url: "{{ route('absensi.user-list') }}",
+            type: 'GET',
+            success: function(response) {
+                var options = '<option value="">Pilih Karyawan</option>';
+                if (response.success && response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        options += '<option value="' + item.id + '">' + (item.nik || '') + ' - ' + (item.nama || item.name || '') + '</option>';
+                    });
+                }
+                $('#select_karyawan').html(options);
+            },
+            error: function() {
+                console.error('Gagal load daftar karyawan dari API');
+                $('#select_karyawan').html('<option value="">Gagal memuat data</option>');
+            }
+        });
+    }
+
+    // Load daftar status dari API
+    function loadStatusOptions() {
+        $.ajax({
+            url: "{{ route('absensi.status-list') }}",
+            type: 'GET',
+            success: function(response) {
+                var options = '<option value="">Pilih Status</option>';
+                if (response && response.length > 0) {
+                    response.forEach(function(item) {
+                        options += '<option value="' + (item.kode || item.id) + '">' + (item.nama || item.status || item.kode) + '</option>';
+                    });
+                } else {
+                    // Fallback ke default options
+                    options += '<option value="A">ABSEN</option>';
+                    options += '<option value="S">SAKIT</option>';
+                    options += '<option value="I">IZIN</option>';
+                    options += '<option value="IPC">IZIN POTONG CUTI</option>';
+                    options += '<option value="IPG">IZIN POTONG GAJI</option>';
+                    options += '<option value="C">CUTI LAINNYA</option>';
+                    options += '<option value="L">LIBUR</option>';
+                }
+                $('#absen_status').html(options);
+            },
+            error: function() {
+                console.error('Gagal load daftar status dari API');
+                // Fallback ke default options
+                var options = '<option value="">Pilih Status</option>';
+                options += '<option value="A">ABSEN</option>';
+                options += '<option value="S">SAKIT</option>';
+                options += '<option value="I">IZIN</option>';
+                options += '<option value="IPC">IZIN POTONG CUTI</option>';
+                options += '<option value="IPG">IZIN POTONG GAJI</option>';
+                options += '<option value="C">CUTI LAINNYA</option>';
+                options += '<option value="L">LIBUR</option>';
+                $('#absen_status').html(options);
+            }
+        });
+    }
+
+    // Load options saat halaman ready
+    loadUnitOptions();
+    loadKaryawanOptions();
+    loadStatusOptions();
 </script>
 @endpush

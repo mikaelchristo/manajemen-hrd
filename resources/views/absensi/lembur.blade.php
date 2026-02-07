@@ -190,7 +190,7 @@
                 }
             },
             columns: [
-                { 
+                {
                     data: null,
                     orderable: false,
                     searchable: false,
@@ -200,8 +200,8 @@
                 },
                 { data: 'nama', name: 'nama' },
                 { data: 'unit', name: 'unit', defaultContent: '-' },
-                { 
-                    data: 'tanggal', 
+                {
+                    data: 'tanggal',
                     name: 'tanggal',
                     render: function(data) {
                         if (data) {
@@ -211,8 +211,8 @@
                         return '-';
                     }
                 },
-                { 
-                    data: 'jammasuk', 
+                {
+                    data: 'jammasuk',
                     name: 'jammasuk',
                     defaultContent: '-',
                     render: function(data) {
@@ -222,8 +222,8 @@
                         return '<span class="badge badge-light-secondary">-</span>';
                     }
                 },
-                { 
-                    data: 'jampulang', 
+                {
+                    data: 'jampulang',
                     name: 'jampulang',
                     defaultContent: '-',
                     render: function(data) {
@@ -233,8 +233,8 @@
                         return '<span class="badge badge-light-secondary">-</span>';
                     }
                 },
-                { 
-                    data: 'durasi', 
+                {
+                    data: 'durasi',
                     name: 'durasi',
                     defaultContent: '-',
                     render: function(data) {
@@ -252,7 +252,7 @@
                     render: function(data, type, row) {
                         return `
                             <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-sm btn-icon btn-light-primary me-2 btn-edit" 
+                                <button type="button" class="btn btn-sm btn-icon btn-light-primary me-2 btn-edit"
                                     data-id="${row.id || ''}"
                                     data-userid="${row.userid || ''}"
                                     data-tanggal="${row.tanggal || ''}"
@@ -310,6 +310,8 @@
             $('#lembur_jammasuk').val(data.jammasuk);
             $('#lembur_jampulang').val(data.jampulang);
             $('#lembur_keterangan').val(data.keterangan);
+            // Set selected value dan disable saat edit
+            $('#lembur_karyawan').val(data.userid);
             $('#lembur_karyawan').prop('disabled', true);
             $('#modal-lembur').modal('show');
         });
@@ -376,14 +378,23 @@
     });
 
     function loadKaryawanOptions() {
-        $.get("{{ route('karyawan.getData') }}", { length: -1 }, function(response) {
-            var options = '<option value="">Pilih Karyawan</option>';
-            if (response.data && response.data.length > 0) {
-                response.data.forEach(function(item) {
-                    options += '<option value="' + item.id + '">' + item.nikKaryawan + ' - ' + item.namaKaryawan + '</option>';
-                });
+        // Load from API absensi
+        $.ajax({
+            url: "{{ route('absensi.user-list') }}",
+            type: 'GET',
+            success: function(response) {
+                var options = '<option value="">Pilih Karyawan</option>';
+                if (response.success && response.data && response.data.length > 0) {
+                    response.data.forEach(function(item) {
+                        options += '<option value="' + item.id + '">' + (item.nik || '') + ' - ' + (item.nama || item.name || '') + '</option>';
+                    });
+                }
+                $('#lembur_karyawan').html(options);
+            },
+            error: function() {
+                console.error('Gagal load daftar karyawan dari API');
+                $('#lembur_karyawan').html('<option value="">Gagal memuat data</option>');
             }
-            $('#lembur_karyawan').html(options);
         });
     }
 </script>

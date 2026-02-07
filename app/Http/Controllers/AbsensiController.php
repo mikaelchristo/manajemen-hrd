@@ -29,14 +29,7 @@ class AbsensiController extends Controller
             ['title' => 'Monitoring Absensi']
         ];
 
-        // Ambil daftar unit dari data karyawan lokal
-        $units = \App\Models\Karyawan::select('unit')
-            ->distinct()
-            ->whereNotNull('unit')
-            ->orderBy('unit')
-            ->pluck('unit');
-
-        return view('absensi.index', compact('pageTitle', 'breadcrumbs', 'units'));
+        return view('absensi.index', compact('pageTitle', 'breadcrumbs'));
     }
 
     /**
@@ -347,6 +340,81 @@ class AbsensiController extends Controller
     }
 
     /**
+     * Mengambil daftar unit kerja dari API eksternal
+     */
+    public function getUnitList()
+    {
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $this->apiKey,
+            ])->withoutVerifying()->get($this->baseUrl . 'getUnitList');
+
+            if ($response->successful()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => $response->json()
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal mengambil data unit'
+            ], 500);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengambil daftar karyawan dari API eksternal
+     */
+    public function getUserList(Request $request)
+    {
+        try {
+            $url = $this->baseUrl . 'getUserList';
+
+            // Jika ada filter unit_id
+            if ($request->has('unit_id') && $request->unit_id) {
+                $url .= '?unit_id=' . $request->unit_id;
+            }
+
+            Log::info('Fetching user list from: ' . $url);
+
+            $response = Http::withHeaders([
+                'X-API-KEY' => $this->apiKey,
+            ])->withoutVerifying()->timeout(60)->get($url);
+
+            Log::info('User list response status: ' . $response->status());
+
+            if ($response->successful()) {
+                $data = $response->json();
+                Log::info('User list count: ' . (is_array($data) ? count($data) : 'not array'));
+                return response()->json([
+                    'success' => true,
+                    'data' => $data
+                ]);
+            }
+
+            Log::error('Failed to get user list: ' . $response->body());
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal mengambil data karyawan: HTTP ' . $response->status()
+            ], 500);
+
+        } catch (\Exception $e) {
+            Log::error('Exception in getUserList: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Input absen manual
      */
     public function inputAbsen(Request $request)
@@ -580,24 +648,93 @@ class AbsensiController extends Controller
 
             $response = Http::withHeaders([
                 'X-API-KEY' => $this->apiKey,
-            ])->withoutVerifying()->get($this->baseUrl . 'getExportData', [
+            ])->withoutVerifying()->timeout(60)->get($this->baseUrl . 'getExportData', [
                 'tanggal' => $tanggal,
                 'unit' => $unit,
             ]);
 
             if ($response->successful()) {
-                return response()->json([
-                    'success' => true,
-                    'data' => $response->json()
-                ]);
+                $result = $response->json();
+                $data = $result['data'] ?? [];
+
+                if (empty($data)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tidak ada data untuk diexport'
+                    ], 400);
+                }
+
+                // Buat file Excel menggunakan PhpSpreadsheet
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle('Data Absensi');
+
+                // Header
+                $headers = ['No', 'Nama', 'NIK', 'Unit', 'Tanggal', 'Jam Masuk', 'Jam Pulang', 'Shift', 'Status', 'Keterangan'];
+                $col = 'A';
+                foreach ($headers as $header) {
+                    $sheet->setCellValue($col . '1', $header);
+                    $sheet->getStyle($col . '1')->getFont()->setBold(true);
+                    $sheet->getStyle($col . '1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('4472C4');
+                    $sheet->getStyle($col . '1')->getFont()->getColor()->setRGB('FFFFFF');
+                    $col++;
+                }
+
+                // Data rows
+                $row = 2;
+                $no = 1;
+                foreach ($data as $item) {
+                    $statusCode = $item['status'] ?? null;
+                    $kategori = $item['kategori'] ?? null;
+
+                    // Determine status display
+                    if ($kategori == '1' && empty($statusCode)) {
+                        $statusDisplay = 'HADIR';
+                    } else {
+                        $statusDisplay = $this->mapStatus($statusCode);
+                    }
+
+                    $sheet->setCellValue('A' . $row, $no);
+                    $sheet->setCellValue('B' . $row, $item['nama'] ?? '-');
+                    $sheet->setCellValue('C' . $row, $item['nik'] ?? '-');
+                    $sheet->setCellValue('D' . $row, $item['unit'] ?? $item['namaunit'] ?? '-');
+                    $sheet->setCellValue('E' . $row, $item['tanggal'] ?? '-');
+                    $sheet->setCellValue('F' . $row, $item['jammasuk'] ?? '-');
+                    $sheet->setCellValue('G' . $row, $item['jampulang'] ?? '-');
+                    $sheet->setCellValue('H' . $row, $item['shift'] ?? '-');
+                    $sheet->setCellValue('I' . $row, $statusDisplay);
+                    $sheet->setCellValue('J' . $row, $item['keterangan'] ?? '-');
+                    $row++;
+                    $no++;
+                }
+
+                // Auto-size columns
+                foreach (range('A', 'J') as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
+                }
+
+                // Generate filename
+                $filename = 'Absensi_' . $tanggal . '.xlsx';
+
+                // Create Excel file
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+                // Output to browser
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Cache-Control: max-age=0');
+
+                $writer->save('php://output');
+                exit;
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengexport data'
+                'message' => 'Gagal mengexport data dari API'
             ], 400);
 
         } catch (\Exception $e) {
+            Log::error('Export error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
