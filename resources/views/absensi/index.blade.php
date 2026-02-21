@@ -199,6 +199,7 @@
             <!--end::Stats-->
 
             <!--begin::Table-->
+            <div class="table-responsive">
             <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_absensi_table">
                 <thead>
                     <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
@@ -217,6 +218,7 @@
                 <tbody class="fw-semibold text-gray-600">
                 </tbody>
             </table>
+            </div>
             <!--end::Table-->
         </div>
         <!--end::Card body-->

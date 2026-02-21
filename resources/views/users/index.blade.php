@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="d-flex flex-column flex-column-fluid">
-   
+
 
     <!--begin::Content-->
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -33,6 +33,7 @@
 
                 <!--begin::Card body-->
                 <div class="card-body pt-0">
+                    <div class="table-responsive">
                     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_users_table">
                         <thead>
                             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
@@ -48,6 +49,7 @@
                         <tbody class="text-gray-600 fw-semibold">
                         </tbody>
                     </table>
+                    </div>
                 </div>
                 <!--end::Card body-->
             </div>

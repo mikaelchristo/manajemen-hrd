@@ -25,6 +25,23 @@
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
     @stack('styles')
+    <style>
+        /* Sticky table header globally */
+        .table-responsive {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+        .table-responsive table thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background-color: #fff;
+        }
+        .table-responsive table thead th {
+            background-color: #fff;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
     <script>
         // Frame-busting to prevent site from being loaded within a frame without permission (click-jacking)
         if (window.top != window.self) {

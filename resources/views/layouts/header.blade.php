@@ -18,7 +18,7 @@
     <!--begin::App Name-->
     <div class="d-flex flex-column">
         <span class="text-white fw-bold fs-6 text-uppercase" style="line-height: 1.2; letter-spacing: 0.5px;">MANAJEMEN HRD</span>
-        <span class="text-gray-400 fw-semibold fs-7 text-uppercase" style="line-height: 1.2; letter-spacing: 0.3px;">RS IBNU SINA BUKITTINGGI</span>
+        <span class="text-gray-400 fw-semibold fs-7 text-uppercase" style="line-height: 1.2; letter-spacing: 0.3px;">{{ $appData->nama_instansi }}</span>
     </div>
     <!--end::App Name-->
     <!--end::Symbol-->
